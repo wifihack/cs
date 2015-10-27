@@ -1,0 +1,13 @@
+build-*/
+bin/
+*.a
+*.autosave
+*.bak
+*.o
+*.pro.user
+*.so
+Makefile
+Makefile.*
+moc_*
+qrc_*
+ui_*
