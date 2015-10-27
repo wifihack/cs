@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GObj>
+#include <GStateObj>
 
-struct CookieSniffer : GObj {
+struct CookieSniffer : GStateObj {
 public:
   CookieSniffer();
 };
