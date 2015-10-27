@@ -38,3 +38,18 @@ void Widget::setControl() {
   ui->pbClose->setEnabled(active);
   ui->pbOption->setEnabled(!active);
 }
+
+void Widget::on_pbOpen_clicked()
+{
+  qDebug() << "on_pbOpen_clicked()";
+}
+
+void Widget::on_pbClose_clicked()
+{
+  qDebug() << "on_pbClose_clicked()";
+}
+
+void Widget::on_pbOption_clicked()
+{
+  qDebug() << "on_pbOption_clicked()";
+}

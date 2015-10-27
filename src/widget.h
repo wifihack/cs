@@ -24,6 +24,13 @@ public:
 public:
   CookieSniffer cs_;
 
+private slots:
+  void on_pbOpen_clicked();
+
+  void on_pbClose_clicked();
+
+  void on_pbOption_clicked();
+
 private:
   Ui::Widget *ui;
 };
