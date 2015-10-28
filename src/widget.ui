@@ -85,14 +85,14 @@
      <widget class="QTreeWidget" name="twCookie">
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string notr="true">Cookie</string>
        </property>
       </column>
      </widget>
      <widget class="QTreeWidget" name="twDetail">
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string notr="true">Detail</string>
        </property>
       </column>
      </widget>

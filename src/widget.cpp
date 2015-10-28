@@ -27,7 +27,7 @@ void Widget::loadControl() {
 
   QList<int> sizes;
   json["splitter"] >> sizes;
-  if (sizes.count() == 2)
+  if (sizes.count() != 0)
     ui->splitter->setSizes(sizes);
 
   json["cs"] >> cs_;
