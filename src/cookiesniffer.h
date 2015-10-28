@@ -10,5 +10,5 @@ public:
   CookieSniffer();
 
 public:
-  QString adapterName_;
+  QString adapterName_{"dum0"}; // gilgil temp 2015.10.28
 };

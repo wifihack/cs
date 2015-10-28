@@ -13,12 +13,19 @@ AboutDlg::~AboutDlg()
   delete ui;
 }
 
+void AboutDlg::on_pushButton_clicked()
+{
+  close();
+}
+
 void AboutDlg::on_lblLink1_linkActivated(const QString &link)
 {
+  (void)link;
   ui->lblLink1->setOpenExternalLinks(true);
 }
 
 void AboutDlg::on_lblLink2_linkActivated(const QString &link)
 {
+  (void)link;
   ui->lblLink2->setOpenExternalLinks(true);
 }

@@ -29,6 +29,8 @@ void Widget::loadControl() {
   json["splitter"] >> sizes;
   if (sizes.count() == 2)
     ui->splitter->setSizes(sizes);
+
+  json["cs"] >> cs_;
 }
 
 void Widget::saveControl() {
@@ -39,6 +41,7 @@ void Widget::saveControl() {
   QList<int> sizes = ui->splitter->sizes();
   json["splitter"] << sizes;
 
+  json["cs"] << cs_;
   GJson::instance().saveToFile(json);
 }
 

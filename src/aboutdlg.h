@@ -16,6 +16,8 @@ public:
   ~AboutDlg();
 
 private slots:
+  void on_pushButton_clicked();
+
   void on_lblLink1_linkActivated(const QString &link);
 
   void on_lblLink2_linkActivated(const QString &link);
