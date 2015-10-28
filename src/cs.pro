@@ -4,3 +4,4 @@ DESTDIR = $${PWD}/../bin
 SOURCES += *.cpp
 HEADERS += *.h
 FORMS += *.ui
+RESOURCES += cs.qrc

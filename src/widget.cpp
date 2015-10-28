@@ -67,3 +67,10 @@ void Widget::on_pbOption_clicked()
   widget->show();
   qDebug() << "on_pbOption_clicked()"; // gilgil temp 2015.10.28
 }
+
+void Widget::on_pbAbout_clicked()
+{
+  AboutDlg dlg{this};
+  dlg.show();
+  dlg.exec();
+}

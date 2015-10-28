@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "aboutdlg.h"
 #include "cookiesniffer.h"
 
 namespace Ui {
@@ -30,6 +31,8 @@ private slots:
   void on_pbClose_clicked();
 
   void on_pbOption_clicked();
+
+  void on_pbAbout_clicked();
 
 private:
   Ui::Widget *ui;
