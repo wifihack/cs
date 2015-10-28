@@ -16,6 +16,7 @@ Widget::Widget(QWidget *parent) :
 
 Widget::~Widget()
 {
+  ui->pbClose->click();
   saveControl();
   delete ui;
 }
