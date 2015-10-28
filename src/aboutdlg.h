@@ -18,6 +18,8 @@ public:
 private slots:
   void on_lblLink1_linkActivated(const QString &link);
 
+  void on_lblLink2_linkActivated(const QString &link);
+
 private:
   Ui::AboutDlg *ui;
 };

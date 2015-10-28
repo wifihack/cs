@@ -88,7 +88,7 @@
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="text">
-    <string>&lt;a href=&quot;http://www.gilgil.net&quot;&gt;http://www.gilgil.net&lt;/a&gt;</string>
+    <string>&lt;a href=&quot;http://gilgil.net&quot;&gt;http://gilgil.net&lt;/a&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="lblLink2">

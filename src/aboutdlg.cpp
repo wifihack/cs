@@ -17,3 +17,8 @@ void AboutDlg::on_lblLink1_linkActivated(const QString &link)
 {
   ui->lblLink1->setOpenExternalLinks(true);
 }
+
+void AboutDlg::on_lblLink2_linkActivated(const QString &link)
+{
+  ui->lblLink2->setOpenExternalLinks(true);
+}

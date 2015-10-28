@@ -24,12 +24,20 @@ void Widget::loadControl() {
   QJsonObject json = GJson::instance().loadFromFile();
 
   json["widget"] >> *this;
+
+  QList<int> sizes;
+  json["splitter"] >> sizes;
+  if (sizes.count() == 2)
+    ui->splitter->setSizes(sizes);
 }
 
 void Widget::saveControl() {
   QJsonObject json;
 
   json["widget"] << *this;
+
+  QList<int> sizes = ui->splitter->sizes();
+  json["splitter"] << sizes;
 
   GJson::instance().saveToFile(json);
 }
