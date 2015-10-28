@@ -1,7 +1,9 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include <QMessageBox>
 #include <GJsonAux>
+#include <GPropWidget>
 
 Widget::Widget(QWidget *parent) :
   QWidget(parent),
@@ -41,15 +43,27 @@ void Widget::setControl() {
 
 void Widget::on_pbOpen_clicked()
 {
-  qDebug() << "on_pbOpen_clicked()";
+  qDebug() << "on_pbOpen_clicked()"; // gilgil temp 2015.10.28
+  if (!cs_.open()) {
+    QMessageBox::warning(this, "Error", cs_.err->msg());
+  }
+  setControl();
 }
 
 void Widget::on_pbClose_clicked()
 {
-  qDebug() << "on_pbClose_clicked()";
+  cs_.close();
+  setControl();
+  qDebug() << "on_pbClose_clicked()"; // gilgil temp 2015.10.28
 }
 
 void Widget::on_pbOption_clicked()
 {
-  qDebug() << "on_pbOption_clicked()";
+  static GPropWidget* widget{nullptr};
+  if (widget == nullptr)
+    widget = new GPropWidget;
+  widget->setObject(&cs_);
+  widget->setWindowModality(Qt::ApplicationModal);
+  widget->show();
+  qDebug() << "on_pbOption_clicked()"; // gilgil temp 2015.10.28
 }
