@@ -24,5 +24,11 @@ bool CookieSniffer::doClose() {
 }
 
 void CookieSniffer::process(GPacket* packet) {
-  qDebug() << "caplen=" << packet->pktHdr->caplen;
+  QString msg = QString("caplen=%1 ").arg(packet->pktHdr->caplen);
+  switch (packet->proto) {
+    case IPPROTO_TCP : msg += "tcp"; break;
+    case IPPROTO_UDP : msg += "udp"; break;
+    case IPPROTO_ICMP: msg += "icmp"; break;
+  }
+  qDebug() << msg;
 }
