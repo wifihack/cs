@@ -31,6 +31,10 @@ public slots:
 public:
   CookieSniffer cs_;
 
+protected:
+  QList<Cookies> cookiesMgr_;
+  bool isDuplicate(Cookies cookie);
+
 private slots:
   void on_pbOpen_clicked();
 
@@ -42,8 +46,7 @@ private slots:
 
   void on_pbAbout_clicked();
 
-  void on_twCookie_itemClicked(QTreeWidgetItem *item, int column);
-
+  void on_twCookie_itemSelectionChanged();
 
 private:
   Ui::Widget *ui;
