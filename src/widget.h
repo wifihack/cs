@@ -5,6 +5,9 @@
 #include "aboutdlg.h"
 #include "cookiesniffer.h"
 
+// ----------------------------------------------------------------------------
+// Widget
+// ----------------------------------------------------------------------------
 namespace Ui {
   class Widget;
 }
@@ -22,6 +25,9 @@ public:
   void saveControl();
   void setControl();
 
+public slots:
+  void processCookies(Cookies cookies);
+
 public:
   CookieSniffer cs_;
 
@@ -32,7 +38,12 @@ private slots:
 
   void on_pbOption_clicked();
 
+  void on_pbClear_clicked();
+
   void on_pbAbout_clicked();
+
+  void on_twCookie_itemClicked(QTreeWidgetItem *item, int column);
+
 
 private:
   Ui::Widget *ui;
