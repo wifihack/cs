@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
   GApp::initialize();
-  qInfo() << GVERSION;
+  qInfo() << G_VERSION;
 
   Widget w;
   w.show();

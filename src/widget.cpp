@@ -50,6 +50,7 @@ void Widget::on_pbOpen_clicked()
 {
   qDebug() << "on_pbOpen_clicked()"; // gilgil temp 2015.10.28
   if (!cs_.open()) {
+    Q_ASSERT(cs_.err != nullptr);
     QMessageBox::warning(this, "Error", cs_.err->msg());
   }
   setControl();
