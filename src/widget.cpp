@@ -116,7 +116,6 @@ void Widget::on_pbClose_clicked()
 {
   cs_.close();
   setControl();
-  qDebug() << "on_pbClose_clicked()"; // gilgil temp 2015.10.28
 }
 
 void Widget::on_pbOption_clicked()
@@ -127,7 +126,6 @@ void Widget::on_pbOption_clicked()
   widget->setObject(&cs_);
   widget->setWindowModality(Qt::ApplicationModal);
   widget->show();
-  qDebug() << "on_pbOption_clicked()"; // gilgil temp 2015.10.28
 }
 
 void Widget::on_pbClear_clicked()
