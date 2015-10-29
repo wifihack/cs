@@ -24,4 +24,8 @@ protected:
 
 public slots:
   void process(GPacket* packet);
+
+protected:
+  bool isHttpRequest(QString& http);
+  bool findHost(QString& http, QString& host);
 };
