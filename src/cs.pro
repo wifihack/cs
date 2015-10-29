@@ -1,4 +1,4 @@
-QT       += core gui widgets
+QT       += core gui widgets sql
 include(../../../g/g/g.pri)
 LIBS += -lpcap
 DESTDIR = $${PWD}/../bin

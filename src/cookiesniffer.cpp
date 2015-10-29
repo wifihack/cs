@@ -50,7 +50,11 @@ bool CookieSniffer::doOpen() {
 }
 
 bool CookieSniffer::doClose() {
-  return pcap_.close();
+  if (!pcap_.close()) {
+    err = pcap_.err;
+    return false;
+  }
+  return true;
 }
 
 void CookieSniffer::process(GPacket* packet) {

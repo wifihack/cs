@@ -40,6 +40,7 @@ protected:
   bool doOpen() override;
   bool doClose() override;
 
+public:
   GPcap pcap_;
 
 public slots:

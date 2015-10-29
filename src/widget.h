@@ -1,6 +1,9 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QWidget>
 #include "aboutdlg.h"
 #include "cookiesniffer.h"
@@ -30,10 +33,13 @@ public slots:
 
 public:
   CookieSniffer cs_;
+  QString sqliteFileName_{"cookies.sqlite"};
 
 protected:
   QList<Cookies> cookiesMgr_;
   bool isDuplicate(Cookies cookie);
+
+  QSqlDatabase db_;
 
 private slots:
   void on_pbOpen_clicked();
@@ -47,6 +53,8 @@ private slots:
   void on_pbAbout_clicked();
 
   void on_twCookie_itemSelectionChanged();
+
+  void on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
   Ui::Widget *ui;

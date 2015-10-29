@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include <QFile>
 #include <QMessageBox>
 #include <GJsonAux>
 #include <GPropWidget>
@@ -22,6 +23,7 @@ Widget::Widget(QWidget *parent) :
   ui(new Ui::Widget)
 {
   ui->setupUi(this);
+  db_ = QSqlDatabase::addDatabase("QSQLITE");
   QObject::connect(&cs_, SIGNAL(captured(Cookies)), this, SLOT(processCookies(Cookies)), Qt::BlockingQueuedConnection);
   loadControl();
   setControl();
@@ -31,6 +33,7 @@ Widget::~Widget()
 {
   ui->pbClose->click();
   saveControl();
+  db_.close();
   delete ui;
 }
 
@@ -40,6 +43,8 @@ void Widget::loadControl() {
   json["widget"] >> this;
   json["splitter"] >> ui->splitter;
   json["cs"] >> cs_;
+  QString fileName = json["sqliteFileName"].toString();
+  if (fileName != "") sqliteFileName_ = fileName;
 }
 
 void Widget::saveControl() {
@@ -48,6 +53,7 @@ void Widget::saveControl() {
   json["widget"] << this;
   json["splitter"] << ui->splitter;
   json["cs"] << cs_;
+  json["sqliteFileName"] = sqliteFileName_;
 
   GJson::instance().saveToFile(json);
 }
@@ -104,7 +110,24 @@ bool Widget::isDuplicate(Cookies cookies) {
 
 void Widget::on_pbOpen_clicked()
 {
-  qDebug() << "on_pbOpen_clicked()"; // gilgil temp 2015.10.28
+  if (!cs_.active()) {
+    if (sqliteFileName_ == "") {
+      QMessageBox::warning(this, "Error", "sqlite file name not pecified");
+      return;
+    }
+
+    if (!QFile::exists(sqliteFileName_)) {
+      QMessageBox::warning(this, "Error", QString("file\" %1\" not exists").arg(sqliteFileName_));
+      return;
+    }
+
+    db_.setDatabaseName(sqliteFileName_);
+    if (!db_.open()) {
+      QMessageBox::warning(this, "Error", db_.lastError().text());
+      return;
+    }
+  }
+
   if (!cs_.open()) {
     Q_ASSERT(cs_.err != nullptr);
     QMessageBox::warning(this, "Error", cs_.err->msg());
@@ -156,5 +179,51 @@ void Widget::on_twCookie_itemSelectionChanged()
     newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
     newItem->setText(0, cookie.name);
     newItem->setText(1, cookie.value);
+  }
+}
+
+void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+  (void)column;
+
+  if (item == nullptr) return;
+  CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
+  Q_ASSERT(cookieItem != nullptr);
+
+  Cookies cookies = cookieItem->cookies_;
+
+  QStringList baseDomains = cookies.host.split('.');
+  QString baseDomain;
+  while (true) {
+    if (baseDomains.count() == 2) {
+      baseDomain = baseDomains.join('.');
+      break;
+    }
+    baseDomains.removeFirst();
+    if (baseDomains.count() == 0) {
+      QMessageBox::warning(this, "Error", "Can not retrieve baseDomain for " + cookies.host);
+      return;
+    }
+  }
+
+  foreach (Cookie cookie, cookies) {
+    QSqlQuery query(db_);
+    query.exec("select max(id) from moz_cookies;");
+    if (!query.exec()) {
+      QMessageBox::warning(this, "Error", query.lastError().text());
+      return;
+    }
+    query.next();
+    int id = query.value(0).toInt() + 1;
+
+    QString sql = QString(
+      "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
+      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', 1477662089, 1446126089992982, 1446126089992982, 0, 0);")
+      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, "." + cookies.host);
+    qDebug() << sql;
+    if (!query.exec(sql)) {
+      QMessageBox::warning(this, "Error", query.lastError().text());
+      break;
+    }
   }
 }
