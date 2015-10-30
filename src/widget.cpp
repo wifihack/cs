@@ -219,7 +219,7 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
     QString sql = QString(
       "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
       " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', 1477662089, 1446126089992982, 1446126089992982, 0, 0);")
-      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, "." + cookies.host);
+      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, "." + baseDomain);
     qDebug() << sql;
     if (!query.exec(sql)) {
       QMessageBox::warning(this, "Error", query.lastError().text());
