@@ -104,7 +104,7 @@
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="text">
-    <string>&lt;a href=&quot;http://kitribob.kr&quot;&gt;http://kitribob.kr&lt;/a&gt;</string>
+    <string>&lt;a href=&quot;http://bbolmin.tistory.com&quot;&gt;http://bbolmin.tistory.com&lt;/a&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
