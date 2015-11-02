@@ -184,7 +184,6 @@ void Widget::processCookies(Cookies cookies) {
 }
 
 void Widget::processClosed() {
-  qDebug() << ""; // gilgil temp
   ui->pbClose->click();
 }
 
@@ -242,7 +241,7 @@ QString Widget::getBaseDomain(QString host) {
       break;
     }
   }
-  qDebug() << "domainLabelCount" << domainLabelCount; // gilgil temp
+  qDebug() << "domainLabelCount" << domainLabelCount; // gilgil temp 2015.11.03
 
   QStringList baseDomains = host.split('.');
   QString res;
