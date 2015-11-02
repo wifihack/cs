@@ -25,6 +25,7 @@ Widget::Widget(QWidget *parent) :
   ui->setupUi(this);
   db_ = QSqlDatabase::addDatabase("QSQLITE");
   QObject::connect(&cs_, SIGNAL(captured(Cookies)), this, SLOT(processCookies(Cookies)), Qt::BlockingQueuedConnection);
+  QObject::connect(&cs_, SIGNAL(closed()), this, SLOT(processClosed()), Qt::AutoConnection);
   loadControl();
   setControl();
 }
@@ -73,6 +74,11 @@ void Widget::processCookies(Cookies cookies) {
   item->setFlags(item->flags() | Qt::ItemIsEditable);
   item->setText(0, cookies.ip);
   item->setText(1, cookies.host);
+}
+
+void Widget::processClosed() {
+  qDebug() << ""; // gilgil temp
+  ui->pbClose->click();
 }
 
 bool Widget::isDuplicate(Cookies cookies) {
@@ -218,7 +224,7 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 
     QString sql = QString(
       "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
-      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', 1477662089, 1446126089992982, 1446126089992982, 0, 0);")
+      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', 1446476400, 1446460077220140, 1446460077220140, 0, 0);")
       .arg(QString::number(id), baseDomain, cookie.name, cookie.value, "." + baseDomain);
     qDebug() << sql;
     if (!query.exec(sql)) {

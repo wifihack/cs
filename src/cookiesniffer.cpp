@@ -34,7 +34,9 @@ bool Cookies::decode(QString& s) {
 // CookieSniffer
 // ----------------------------------------------------------------------------
 CookieSniffer::CookieSniffer(QObject* parent) : GStateObj(parent) {
-  QObject::connect(&pcap_, SIGNAL(captured(GPacket*)), this, SLOT(process(GPacket*)), Qt::DirectConnection);
+  QObject::connect(&pcap_, SIGNAL(captured(GPacket*)), this, SLOT(processPacket(GPacket*)), Qt::DirectConnection);
+  QObject::connect(&pcap_, SIGNAL(closed()), this, SLOT(processClose()), Qt::AutoConnection);
+  // pcap_.dev_ = "DeSniffer0"; // gilgil temp 2015.11.02
 }
 
 CookieSniffer::~CookieSniffer() {
@@ -57,7 +59,7 @@ bool CookieSniffer::doClose() {
   return true;
 }
 
-void CookieSniffer::process(GPacket* packet) {
+void CookieSniffer::processPacket(GPacket* packet) {
   if (packet->proto != IPPROTO_TCP)
     return;
 
@@ -82,6 +84,10 @@ void CookieSniffer::process(GPacket* packet) {
   cookies.ip = QString(ip);
 
   emit captured(cookies);
+}
+
+void CookieSniffer::processClose() {
+  emit closed();
 }
 
 bool CookieSniffer::isHttpRequest(QString& http) {

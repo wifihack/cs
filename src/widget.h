@@ -30,6 +30,7 @@ public:
 
 public slots:
   void processCookies(Cookies cookies);
+  void processClosed();
 
 public:
   CookieSniffer cs_;

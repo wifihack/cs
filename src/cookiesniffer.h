@@ -44,7 +44,8 @@ public:
   GPcap pcap_;
 
 public slots:
-  void process(GPacket* packet);
+  void processPacket(GPacket* packet);
+  void processClose();
 
 signals:
   void captured(Cookies cookies);
