@@ -332,7 +332,7 @@ void Widget::on_pbGo_clicked()
   QString baseDomain = getBaseDomain(cookies.host);
   QString host = "." + baseDomain;
   uint now = QDateTime::currentDateTime().toTime_t();
-  uint expiry = now  + 86400;
+  QString expiry = QString::number(now  + 86400);
   QString lastAccessed = QString::number(now) + "000000";
   QString creationTime = QString::number(now) + "000000";
 
@@ -353,8 +353,8 @@ void Widget::on_pbGo_clicked()
 
     QString sql = QString(
       "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
-      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', %6, 1446460077220140, 1446460077220140, 0, 0);")
-      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, host).arg(expiry).arg(lastAccessed, creationTime);
+      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', '%6', '%7', '%8', 0, 0);")
+      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, host, expiry, lastAccessed, creationTime);
     qDebug() << sql;
     if (!query.exec(sql)) {
       QMessageBox::warning(this, "Error", query.lastError().text());
