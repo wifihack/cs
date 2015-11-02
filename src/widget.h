@@ -35,6 +35,7 @@ public slots:
 public:
   CookieSniffer cs_;
   QString sqliteFileName_{"cookies.sqlite"};
+  QString findFirefoxSqliteFile();
 
 protected:
   QList<Cookies> cookiesMgr_;

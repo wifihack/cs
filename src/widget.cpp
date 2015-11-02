@@ -24,8 +24,8 @@ Widget::Widget(QWidget *parent) :
 {
   ui->setupUi(this);
   db_ = QSqlDatabase::addDatabase("QSQLITE");
-  QObject::connect(&cs_, SIGNAL(captured(Cookies)), this, SLOT(processCookies(Cookies)), Qt::BlockingQueuedConnection);
-  QObject::connect(&cs_, SIGNAL(closed()), this, SLOT(processClosed()), Qt::AutoConnection);
+  connect(&cs_, SIGNAL(captured(Cookies)), this, SLOT(processCookies(Cookies)), Qt::BlockingQueuedConnection);
+  connect(&cs_, SIGNAL(closed()), this, SLOT(processClosed()), Qt::AutoConnection);
   loadControl();
   setControl();
 }
@@ -45,7 +45,13 @@ void Widget::loadControl() {
   json["splitter"] >> ui->splitter;
   json["cs"] >> cs_;
   QString fileName = json["sqliteFileName"].toString();
-  if (fileName != "") sqliteFileName_ = fileName;
+  if (fileName == "") {
+    fileName = findFirefoxSqliteFile();
+  }
+  if (!QFile::exists(fileName)) {
+    QMessageBox::warning(this, "Error", QString("File %1 not exists").arg(fileName));
+  }
+  sqliteFileName_ = fileName;
 }
 
 void Widget::saveControl() {
@@ -79,6 +85,21 @@ void Widget::processCookies(Cookies cookies) {
 void Widget::processClosed() {
   qDebug() << ""; // gilgil temp
   ui->pbClose->click();
+}
+
+
+#include <QDirIterator>
+QString Widget::findFirefoxSqliteFile() {
+  QDir path = QDir::homePath() + "/.mozilla";
+
+  QDirIterator it(path, QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+      if (it.fileName() == "cookies.sqlite")
+        return it.filePath();
+      it.next();
+  }
+  QMessageBox::critical(this, "Error", "Can not find cookies.sqlite file");
+  return "";
 }
 
 bool Widget::isDuplicate(Cookies cookies) {
