@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDateTime>
 #include <GStateObj>
 #include <GPcap>
 
@@ -17,6 +18,7 @@ struct Cookie {
 // Cookies
 // ----------------------------------------------------------------------------
 struct Cookies : QList<Cookie> {
+  QDateTime time_;
   QString ip;
   QString host;
 

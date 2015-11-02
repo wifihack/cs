@@ -178,8 +178,9 @@ void Widget::processCookies(Cookies cookies) {
   cookiesMgr_.push_back(cookies);
   CookieTreeWidgetItem* item = new CookieTreeWidgetItem(ui->twCookie, cookies);
   item->setFlags(item->flags() | Qt::ItemIsEditable);
-  item->setText(0, cookies.ip);
-  item->setText(1, cookies.host);
+  item->setText(0, cookies.time_.toString("hh:mm:ss"));
+  item->setText(1, cookies.ip);
+  item->setText(2, cookies.host);
 }
 
 void Widget::processClosed() {

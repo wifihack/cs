@@ -80,6 +80,9 @@ void CookieSniffer::processPacket(GPacket* packet) {
   if (!findCookie(http, cookies))
     return;
 
+  QDateTime time_;
+  time_.setTime_t(packet->pktHdr->ts.tv_sec);
+  cookies.time_ = time_;
   GIp ip = htonl(packet->ipHdr->ip_src);
   cookies.ip = QString(ip);
 

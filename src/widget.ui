@@ -99,6 +99,11 @@
      <widget class="QTreeWidget" name="twCookie">
       <column>
        <property name="text">
+        <string>time</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string notr="true">ip</string>
        </property>
       </column>
