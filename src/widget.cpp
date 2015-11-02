@@ -178,7 +178,7 @@ void Widget::processCookies(Cookies cookies) {
   cookiesMgr_.push_back(cookies);
   CookieTreeWidgetItem* item = new CookieTreeWidgetItem(ui->twCookie, cookies);
   item->setFlags(item->flags() | Qt::ItemIsEditable);
-  item->setText(0, cookies.time_.toString("hh:mm:ss"));
+  item->setText(0, cookies.time.toString("hh:mm:ss"));
   item->setText(1, cookies.ip);
   item->setText(2, cookies.host);
 }
@@ -320,6 +320,11 @@ void Widget::on_pbGo_clicked()
   if (item == nullptr) return;
   CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
   Q_ASSERT(cookieItem != nullptr);
+
+  if (!QFile::exists(sqliteFileName_)) {
+    QMessageBox::warning(this, "Error", QString("File %1 not exists").arg(sqliteFileName_));
+    return;
+  }
 
   Cookies cookies = cookieItem->cookies_;
 

@@ -48,6 +48,7 @@ bool CookieSniffer::doOpen() {
   if (!res) {
     err = pcap_.err;
   }
+  prevHttp_.clear();
   return res;
 }
 
@@ -56,6 +57,7 @@ bool CookieSniffer::doClose() {
     err = pcap_.err;
     return false;
   }
+  prevHttp_.clear();
   return true;
 }
 
@@ -69,20 +71,46 @@ void CookieSniffer::processPacket(GPacket* packet) {
   QByteArray ba((const char*)packet->data, packet->dataLen);
   QString http(ba);
 
+  GTransportSessionKey key;
+  key.ip1 = packet->ipHdr->ip_src;
+  key.port1 = packet->tcpHdr->th_sport;
+  key.ip2 = packet->ipHdr->ip_dst;
+  key.port2 = packet->tcpHdr->th_dport;
+  NotCompletedCookiesMap::iterator it = prevHttp_.find(key);
+  if (it != prevHttp_.end()) {
+    qDebug() << "map found";
+    QString prev = *it;
+    http = prev + http;
+    prevHttp_.remove(key);
+  }
+
   if (!isHttpRequest(http))
     return;
 
   Cookies cookies;
   if (!findHost(http, cookies.host))
     return;
-  // qDebug() << "host=" << host; // gilgil temp 2015.10.29
 
   if (!findCookie(http, cookies))
     return;
 
+  if (findEndOfHeader(http)) {
+    cookies.status = Cookies::Completed;
+  } else {
+    cookies.status = Cookies::NotCompleted;
+    GTransportSessionKey key;
+    key.ip1 = packet->ipHdr->ip_src;
+    key.port1 = packet->tcpHdr->th_sport;
+    key.ip2 = packet->ipHdr->ip_dst;
+    key.port2 = packet->tcpHdr->th_dport;
+    prevHttp_[key] = http;
+    qDebug() << "map inserted";
+    return;
+  }
+
   QDateTime time_;
   time_.setTime_t(packet->pktHdr->ts.tv_sec);
-  cookies.time_ = time_;
+  cookies.time = time_;
   GIp ip = htonl(packet->ipHdr->ip_src);
   cookies.ip = QString(ip);
 
@@ -95,11 +123,9 @@ void CookieSniffer::processClose() {
 
 bool CookieSniffer::isHttpRequest(QString& http) {
   if (http.startsWith("GET ")) {
-    http = http.mid(4);
     return true;
   }
   if (http.startsWith("POST ")) {
-    http = http.mid(5);
     return true;
   }
   return false;
@@ -118,5 +144,11 @@ bool CookieSniffer::findCookie(QString& http, Cookies& cookies) {
   int i = rexCookie.indexIn(http);
   if (i == -1) return false;
   QString s = rexCookie.cap(1);
+  qDebug() << "length=" << s.length(); // gilgil temp 2015.11.03
   return cookies.decode(s);
+}
+
+bool CookieSniffer::findEndOfHeader(QString& http) {
+  static QRegExp rexEndOfHeader("\r\n\r\n");
+  return rexEndOfHeader.indexIn(http) != -1;
 }

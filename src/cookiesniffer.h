@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QDateTime>
+#include <QMap>
 #include <GStateObj>
 #include <GPcap>
+#include <GPacketKey>
 
 // ----------------------------------------------------------------------------
 // Cookie
@@ -18,11 +20,24 @@ struct Cookie {
 // Cookies
 // ----------------------------------------------------------------------------
 struct Cookies : QList<Cookie> {
-  QDateTime time_;
+  typedef enum {
+    NotCompleted,
+    Completed
+  } Status;
+
+  QDateTime time;
   QString ip;
   QString host;
+  Status status;
 
   bool decode(QString& s);
+};
+
+// ----------------------------------------------------------------------------
+// NotCompletedCookiesMap
+// ----------------------------------------------------------------------------
+struct NotCompletedCookiesMap: QMap<GTransportSessionKey /*key*/, QString /*http*/> {
+
 };
 
 // ----------------------------------------------------------------------------
@@ -53,7 +68,10 @@ signals:
   void captured(Cookies cookies);
 
 protected:
+  NotCompletedCookiesMap prevHttp_;
+
   bool isHttpRequest(QString& http);
   bool findHost(QString& http, QString& host);
   bool findCookie(QString& http, Cookies& cookies);
+  bool findEndOfHeader(QString& http);
 };
