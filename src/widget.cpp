@@ -336,12 +336,13 @@ void Widget::on_twCookie_itemSelectionChanged()
 void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   (void)column;
-
   if (item == nullptr) return;
   CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
   Q_ASSERT(cookieItem != nullptr);
 
   Cookies cookies = cookieItem->cookies_;
+
+  QSqlQuery query(db_);
 
   QString baseDomain = getBaseDomain(cookies.host);
   QString host = "." + baseDomain;
@@ -350,8 +351,13 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
   QString lastAccessed = QString::number(now) + "000000";
   QString creationTime = QString::number(now) + "000000";
 
-  foreach (Cookie cookie, cookies) {
-    QSqlQuery query(db_);
+  QString sql = QString("delete from moz_cookies where baseDomain='%1'").arg(baseDomain);
+  qDebug() << sql;
+  if (!query.exec(sql)) {
+    QMessageBox::warning(this, "Error", query.lastError().text());
+  }
+
+  foreach (Cookie cookie, cookies) {  
     query.exec("select max(id) from moz_cookies;");
     if (!query.exec()) {
       QMessageBox::warning(this, "Error", query.lastError().text());
