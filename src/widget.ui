@@ -63,6 +63,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pbGo">
+       <property name="text">
+        <string>Go</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pbAbout">
        <property name="text">
         <string>About</string>
@@ -123,6 +130,7 @@
   <tabstop>pbClose</tabstop>
   <tabstop>pbOption</tabstop>
   <tabstop>pbClear</tabstop>
+  <tabstop>pbGo</tabstop>
   <tabstop>pbAbout</tabstop>
   <tabstop>twCookie</tabstop>
   <tabstop>twDetail</tabstop>

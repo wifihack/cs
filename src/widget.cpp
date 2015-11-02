@@ -169,6 +169,7 @@ void Widget::setControl() {
   ui->pbOpen->setEnabled(!active);
   ui->pbClose->setEnabled(active);
   ui->pbOption->setEnabled(!active);
+  ui->pbGo->setEnabled(ui->twCookie->selectedItems().count() > 0);
 }
 
 void Widget::processCookies(Cookies cookies) {
@@ -308,6 +309,60 @@ void Widget::on_pbClear_clicked()
   cookiesMgr_.clear();
 }
 
+#include <QDateTime>
+#include <QProcess>
+void Widget::on_pbGo_clicked()
+{
+  if (ui->twCookie->selectedItems().count() == 0)
+    return;
+  QTreeWidgetItem* item = ui->twCookie->selectedItems().at(0);
+  if (item == nullptr) return;
+  CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
+  Q_ASSERT(cookieItem != nullptr);
+
+  Cookies cookies = cookieItem->cookies_;
+
+  QSqlQuery query(db_);
+
+  QString baseDomain = getBaseDomain(cookies.host);
+  QString host = "." + baseDomain;
+  uint now = QDateTime::currentDateTime().toTime_t();
+  uint expiry = now  + 86400;
+  QString lastAccessed = QString::number(now) + "000000";
+  QString creationTime = QString::number(now) + "000000";
+
+  QString sql = QString("delete from moz_cookies where baseDomain='%1'").arg(baseDomain);
+  qDebug() << sql;
+  if (!query.exec(sql)) {
+    QMessageBox::warning(this, "Error", query.lastError().text());
+  }
+
+  foreach (Cookie cookie, cookies) {
+    query.exec("select max(id) from moz_cookies;");
+    if (!query.exec()) {
+      QMessageBox::warning(this, "Error", query.lastError().text());
+      return;
+    }
+    query.next();
+    int id = query.value(0).toInt() + 1;
+
+    QString sql = QString(
+      "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
+      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', %6, 1446460077220140, 1446460077220140, 0, 0);")
+      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, host).arg(expiry).arg(lastAccessed, creationTime);
+    qDebug() << sql;
+    if (!query.exec(sql)) {
+      QMessageBox::warning(this, "Error", query.lastError().text());
+      break;
+    }
+  }
+
+  QStringList commands; commands << QString("http://%1").arg(baseDomain);
+  QProcess* process = new QProcess;
+  process->start("firefox", commands); // do not delete process
+
+}
+
 void Widget::on_pbAbout_clicked()
 {
   AboutDlg dlg{this};
@@ -330,50 +385,13 @@ void Widget::on_twCookie_itemSelectionChanged()
     newItem->setText(0, cookie.name);
     newItem->setText(1, cookie.value);
   }
+
+  setControl();
 }
 
-#include <QDateTime>
 void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
+  (void)item;
   (void)column;
-  if (item == nullptr) return;
-  CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
-  Q_ASSERT(cookieItem != nullptr);
-
-  Cookies cookies = cookieItem->cookies_;
-
-  QSqlQuery query(db_);
-
-  QString baseDomain = getBaseDomain(cookies.host);
-  QString host = "." + baseDomain;
-  uint now = QDateTime::currentDateTime().toTime_t();
-  uint expiry = now  + 86400;
-  QString lastAccessed = QString::number(now) + "000000";
-  QString creationTime = QString::number(now) + "000000";
-
-  QString sql = QString("delete from moz_cookies where baseDomain='%1'").arg(baseDomain);
-  qDebug() << sql;
-  if (!query.exec(sql)) {
-    QMessageBox::warning(this, "Error", query.lastError().text());
-  }
-
-  foreach (Cookie cookie, cookies) {  
-    query.exec("select max(id) from moz_cookies;");
-    if (!query.exec()) {
-      QMessageBox::warning(this, "Error", query.lastError().text());
-      return;
-    }
-    query.next();
-    int id = query.value(0).toInt() + 1;
-
-    QString sql = QString(
-      "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
-      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', %6, 1446460077220140, 1446460077220140, 0, 0);")
-      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, host).arg(expiry).arg(lastAccessed, creationTime);
-    qDebug() << sql;
-    if (!query.exec(sql)) {
-      QMessageBox::warning(this, "Error", query.lastError().text());
-      break;
-    }
-  }
+  ui->pbGo->click();
 }

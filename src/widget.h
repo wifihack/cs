@@ -54,6 +54,8 @@ private slots:
 
   void on_pbClear_clicked();
 
+  void on_pbGo_clicked();
+
   void on_pbAbout_clicked();
 
   void on_twCookie_itemSelectionChanged();
