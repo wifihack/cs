@@ -332,6 +332,7 @@ void Widget::on_twCookie_itemSelectionChanged()
   }
 }
 
+#include <QDateTime>
 void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   (void)column;
@@ -343,6 +344,11 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
   Cookies cookies = cookieItem->cookies_;
 
   QString baseDomain = getBaseDomain(cookies.host);
+  QString host = "." + baseDomain;
+  uint now = QDateTime::currentDateTime().toTime_t();
+  uint expiry = now  + 86400;
+  QString lastAccessed = QString::number(now) + "000000";
+  QString creationTime = QString::number(now) + "000000";
 
   foreach (Cookie cookie, cookies) {
     QSqlQuery query(db_);
@@ -356,8 +362,8 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 
     QString sql = QString(
       "INSERT INTO moz_cookies (id,  baseDomain, appId, inBrowserElement, name, value, host, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)"\
-      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', 1446476400, 1446460077220140, 1446460077220140, 0, 0);")
-      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, "." + baseDomain);
+      " VALUES                 ( %1, '%2',       0,     0,                '%3', '%4',  '%5', '/', %6, 1446460077220140, 1446460077220140, 0, 0);")
+      .arg(QString::number(id), baseDomain, cookie.name, cookie.value, host).arg(expiry).arg(lastAccessed, creationTime);
     qDebug() << sql;
     if (!query.exec(sql)) {
       QMessageBox::warning(this, "Error", query.lastError().text());
