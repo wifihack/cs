@@ -34,7 +34,6 @@ Widget::~Widget()
 {
   ui->pbClose->click();
   saveControl();
-  db_.close();
   delete ui;
 }
 
@@ -261,24 +260,6 @@ QString Widget::getBaseDomain(QString host) {
 
 void Widget::on_pbOpen_clicked()
 {
-  if (!cs_.active()) {
-    if (sqliteFileName_ == "") {
-      QMessageBox::warning(this, "Error", "sqlite file name not pecified");
-      return;
-    }
-
-    if (!QFile::exists(sqliteFileName_)) {
-      QMessageBox::warning(this, "Error", QString("file\" %1\" not exists").arg(sqliteFileName_));
-      return;
-    }
-
-    db_.setDatabaseName(sqliteFileName_);
-    if (!db_.open()) {
-      QMessageBox::warning(this, "Error", db_.lastError().text());
-      return;
-    }
-  }
-
   if (!cs_.open()) {
     Q_ASSERT(cs_.err != nullptr);
     QMessageBox::warning(this, "Error", cs_.err->msg());
@@ -320,8 +301,19 @@ void Widget::on_pbGo_clicked()
   CookieTreeWidgetItem* cookieItem = dynamic_cast<CookieTreeWidgetItem*>(item);
   Q_ASSERT(cookieItem != nullptr);
 
+  if (sqliteFileName_ == "") {
+    QMessageBox::warning(this, "Error", "sqlite file name not pecified");
+    return;
+  }
+
   if (!QFile::exists(sqliteFileName_)) {
-    QMessageBox::warning(this, "Error", QString("File %1 not exists").arg(sqliteFileName_));
+    QMessageBox::warning(this, "Error", QString("file\" %1\" not exists").arg(sqliteFileName_));
+    return;
+  }
+
+  db_.setDatabaseName(sqliteFileName_);
+  if (!db_.open()) {
+    QMessageBox::warning(this, "Error", db_.lastError().text());
     return;
   }
 
@@ -346,7 +338,6 @@ void Widget::on_pbGo_clicked()
     query.exec("select max(id) from moz_cookies;");
     if (!query.exec()) {
       QMessageBox::warning(this, "Error", query.lastError().text());
-      return;
     }
     query.next();
     int id = query.value(0).toInt() + 1;
@@ -358,14 +349,14 @@ void Widget::on_pbGo_clicked()
     qDebug() << sql;
     if (!query.exec(sql)) {
       QMessageBox::warning(this, "Error", query.lastError().text());
-      break;
     }
   }
+
+  db_.close();
 
   QStringList commands; commands << QString("http://%1").arg(baseDomain);
   QProcess* process = new QProcess;
   process->start("firefox", commands); // do not delete process
-
 }
 
 void Widget::on_pbAbout_clicked()

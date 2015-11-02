@@ -34,7 +34,7 @@ public slots:
 
 public:
   CookieSniffer cs_;
-  QString sqliteFileName_{"cookies.sqlite"};
+  QString sqliteFileName_;
   QStringList twoLevelDomainPrefix_;
 
 protected:
