@@ -354,7 +354,7 @@ void Widget::on_pbGo_clicked()
 
   db_.close();
 
-  QStringList commands; commands << QString("http://%1").arg(baseDomain);
+  QStringList commands; commands << QString("http://%1").arg(cookies.host);
   QProcess* process = new QProcess;
   process->start("firefox", commands); // do not delete process
 }
