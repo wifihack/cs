@@ -52,6 +52,104 @@ void Widget::loadControl() {
     QMessageBox::warning(this, "Error", QString("File %1 not exists").arg(fileName));
   }
   sqliteFileName_ = fileName;
+
+  QString s = json["twoLevelDomainPrefix"].toString();
+  if (s == "") {
+    twoLevelDomainPrefix_ << ".com.au";
+    twoLevelDomainPrefix_ << ".net.au";
+    twoLevelDomainPrefix_ << ".co.nz";
+    twoLevelDomainPrefix_ << ".net.nz";
+    twoLevelDomainPrefix_ << ".com.sg";
+    twoLevelDomainPrefix_ << ".com.hk";
+    twoLevelDomainPrefix_ << ".com.cn";
+    twoLevelDomainPrefix_ << ".cn.com";
+    twoLevelDomainPrefix_ << ".co.jp";
+    twoLevelDomainPrefix_ << ".co.kr";
+    twoLevelDomainPrefix_ << ".co.in";
+    twoLevelDomainPrefix_ << ".com.my";
+    twoLevelDomainPrefix_ << ".com.tw";
+    twoLevelDomainPrefix_ << ".co.id";
+    twoLevelDomainPrefix_ << ".web.id";
+    twoLevelDomainPrefix_ << ".com.fj";
+    twoLevelDomainPrefix_ << ".com.nf";
+    twoLevelDomainPrefix_ << ".com.lk";
+    twoLevelDomainPrefix_ << ".co.uk";
+    twoLevelDomainPrefix_ << ".uk.com";
+    twoLevelDomainPrefix_ << ".com.de";
+    twoLevelDomainPrefix_ << ".com.es";
+    twoLevelDomainPrefix_ << ".co.nl";
+    twoLevelDomainPrefix_ << ".co.at";
+    twoLevelDomainPrefix_ << ".com.pl";
+    twoLevelDomainPrefix_ << ".com.ua";
+    twoLevelDomainPrefix_ << ".com.tr";
+    twoLevelDomainPrefix_ << ".co.il";
+    twoLevelDomainPrefix_ << ".co.ee";
+    twoLevelDomainPrefix_ << ".com.mt";
+    twoLevelDomainPrefix_ << ".com.hr";
+    twoLevelDomainPrefix_ << ".com.br";
+    twoLevelDomainPrefix_ << ".br.com";
+    twoLevelDomainPrefix_ << ".us.com";
+    twoLevelDomainPrefix_ << ".com.mx";
+    twoLevelDomainPrefix_ << ".com.pe";
+    twoLevelDomainPrefix_ << ".com.do";
+    twoLevelDomainPrefix_ << ".com.pa";
+    twoLevelDomainPrefix_ << ".com.ai";
+    twoLevelDomainPrefix_ << ".com.ec";
+    twoLevelDomainPrefix_ << ".com.ve";
+    twoLevelDomainPrefix_ << ".co.ve";
+    twoLevelDomainPrefix_ << ".com.ag";
+    twoLevelDomainPrefix_ << ".com.gt";
+    twoLevelDomainPrefix_ << ".co.gy";
+    twoLevelDomainPrefix_ << ".com.gy";
+    twoLevelDomainPrefix_ << ".com.cu";
+    twoLevelDomainPrefix_ << ".com.pr";
+    twoLevelDomainPrefix_ << ".com.ar";
+    twoLevelDomainPrefix_ << ".co.cr";
+    twoLevelDomainPrefix_ << ".com.jm";
+    twoLevelDomainPrefix_ << ".com.sv";
+    twoLevelDomainPrefix_ << ".com.bs";
+    twoLevelDomainPrefix_ << ".com.co";
+    twoLevelDomainPrefix_ << ".com.uy";
+    twoLevelDomainPrefix_ << ".com.hn";
+    twoLevelDomainPrefix_ << ".com.py";
+    twoLevelDomainPrefix_ << ".com.ni";
+    twoLevelDomainPrefix_ << ".com.vi";
+    twoLevelDomainPrefix_ << ".com.bo";
+    twoLevelDomainPrefix_ << ".co.za";
+    twoLevelDomainPrefix_ << ".ac.ke";
+    twoLevelDomainPrefix_ << ".co.ke";
+    twoLevelDomainPrefix_ << ".co.ug";
+    twoLevelDomainPrefix_ << ".co.na";
+    twoLevelDomainPrefix_ << ".com.cm";
+    twoLevelDomainPrefix_ << ".com.na";
+    twoLevelDomainPrefix_ << ".co.com";
+    twoLevelDomainPrefix_ << ".go.kr";
+    twoLevelDomainPrefix_ << ".mil.kr";
+    twoLevelDomainPrefix_ << ".ac.kr";
+    twoLevelDomainPrefix_ << ".hs.kr";
+    twoLevelDomainPrefix_ << ".ms.kr";
+    twoLevelDomainPrefix_ << ".es.kr";
+    twoLevelDomainPrefix_ << ".kg.kr";
+    twoLevelDomainPrefix_ << ".sc.kr";
+    twoLevelDomainPrefix_ << ".seoul.kr";
+    twoLevelDomainPrefix_ << ".busan.kr";
+    twoLevelDomainPrefix_ << ".daegu.kr";
+    twoLevelDomainPrefix_ << ".incheon.kr";
+    twoLevelDomainPrefix_ << ".gwangju.kr";
+    twoLevelDomainPrefix_ << ".daejeon.kr";
+    twoLevelDomainPrefix_ << ".ulsan.kr";
+    twoLevelDomainPrefix_ << ".gyeonggi.kr";
+    twoLevelDomainPrefix_ << ".gangwon.kr";
+    twoLevelDomainPrefix_ << ".chungbuk.kr";
+    twoLevelDomainPrefix_ << ".chungnam.kr";
+    twoLevelDomainPrefix_ << ".jeonbuk.kr";
+    twoLevelDomainPrefix_ << ".jeonnam.kr";
+    twoLevelDomainPrefix_ << ".gyeongbuk.kr";
+    twoLevelDomainPrefix_ << ".gyeongnam.kr";
+    twoLevelDomainPrefix_ << ".jeju.kr";
+  } else {
+    twoLevelDomainPrefix_ = s.split(',');
+  }
 }
 
 void Widget::saveControl() {
@@ -61,6 +159,7 @@ void Widget::saveControl() {
   json["splitter"] << ui->splitter;
   json["cs"] << cs_;
   json["sqliteFileName"] = sqliteFileName_;
+  json["twoLevelDomainPrefix"] = twoLevelDomainPrefix_.join(',');
 
   GJson::instance().saveToFile(json);
 }
@@ -85,21 +184,6 @@ void Widget::processCookies(Cookies cookies) {
 void Widget::processClosed() {
   qDebug() << ""; // gilgil temp
   ui->pbClose->click();
-}
-
-
-#include <QDirIterator>
-QString Widget::findFirefoxSqliteFile() {
-  QDir path = QDir::homePath() + "/.mozilla";
-
-  QDirIterator it(path, QDirIterator::Subdirectories);
-  while (it.hasNext()) {
-      if (it.fileName() == "cookies.sqlite")
-        return it.filePath();
-      it.next();
-  }
-  QMessageBox::critical(this, "Error", "Can not find cookies.sqlite file");
-  return "";
 }
 
 bool Widget::isDuplicate(Cookies cookies) {
@@ -134,6 +218,45 @@ bool Widget::isDuplicate(Cookies cookies) {
   return false;
 }
 
+#include <QDirIterator>
+QString Widget::findFirefoxSqliteFile() {
+  QDir path = QDir::homePath() + "/.mozilla";
+
+  QDirIterator it(path, QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+      if (it.fileName() == "cookies.sqlite")
+        return it.filePath();
+      it.next();
+  }
+  QMessageBox::critical(this, "Error", "Can not find cookies.sqlite file");
+  return "";
+}
+
+QString Widget::getBaseDomain(QString host) {
+  int domainLabelCount = 2;
+  foreach (QString prefix, twoLevelDomainPrefix_) {
+    if (host.endsWith(prefix)) {
+      domainLabelCount = 3;
+      break;
+    }
+  }
+  qDebug() << "domainLabelCount" << domainLabelCount; // gilgil temp
+
+  QStringList baseDomains = host.split('.');
+  QString res;
+  while (true) {
+    if (baseDomains.count() == domainLabelCount) {
+      res = baseDomains.join('.');
+      break;
+    }
+    baseDomains.removeFirst();
+    if (baseDomains.count() == 0) {
+      QMessageBox::warning(this, "Error", "Can not retrieve baseDomain for " + host);
+      return "";
+    }
+  }
+  return res;
+}
 
 void Widget::on_pbOpen_clicked()
 {
@@ -219,19 +342,7 @@ void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
 
   Cookies cookies = cookieItem->cookies_;
 
-  QStringList baseDomains = cookies.host.split('.');
-  QString baseDomain;
-  while (true) {
-    if (baseDomains.count() == 2) {
-      baseDomain = baseDomains.join('.');
-      break;
-    }
-    baseDomains.removeFirst();
-    if (baseDomains.count() == 0) {
-      QMessageBox::warning(this, "Error", "Can not retrieve baseDomain for " + cookies.host);
-      return;
-    }
-  }
+  QString baseDomain = getBaseDomain(cookies.host);
 
   foreach (Cookie cookie, cookies) {
     QSqlQuery query(db_);

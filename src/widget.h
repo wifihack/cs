@@ -35,11 +35,13 @@ public slots:
 public:
   CookieSniffer cs_;
   QString sqliteFileName_{"cookies.sqlite"};
-  QString findFirefoxSqliteFile();
+  QStringList twoLevelDomainPrefix_;
 
 protected:
   QList<Cookies> cookiesMgr_;
   bool isDuplicate(Cookies cookie);
+  QString findFirefoxSqliteFile();
+  QString getBaseDomain(QString host);
 
   QSqlDatabase db_;
 
