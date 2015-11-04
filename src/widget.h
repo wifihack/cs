@@ -60,8 +60,6 @@ private slots:
 
   void on_twCookie_itemSelectionChanged();
 
-  void on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column);
-
 private:
   Ui::Widget *ui;
 };

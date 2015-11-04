@@ -384,10 +384,3 @@ void Widget::on_twCookie_itemSelectionChanged()
 
   setControl();
 }
-
-void Widget::on_twCookie_itemDoubleClicked(QTreeWidgetItem *item, int column)
-{
-  (void)item;
-  (void)column;
-  ui->pbGo->click();
-}
