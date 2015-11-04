@@ -179,7 +179,7 @@ void Widget::processCookies(Cookies cookies) {
   item->setFlags(item->flags() | Qt::ItemIsEditable);
   item->setText(0, cookies.time.toString("hh:mm:ss"));
   item->setText(1, cookies.ip);
-  item->setText(2, cookies.host);
+  item->setText(2, cookies.url);
 }
 
 void Widget::processClosed() {
@@ -354,7 +354,7 @@ void Widget::on_pbGo_clicked()
 
   db_.close();
 
-  QStringList commands; commands << QString("http://%1").arg(cookies.host);
+  QStringList commands; commands << QString("http://%1").arg(cookies.url);
   QProcess* process = new QProcess;
   process->start("firefox", commands); // do not delete process
 }

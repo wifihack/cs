@@ -84,13 +84,15 @@ void CookieSniffer::processPacket(GPacket* packet) {
     prevHttp_.remove(key);
   }
 
-  if (!isHttpRequest(http))
+  QString uri;
+  if (!isHttpRequest(http, uri))
+    return;
+
+  QString host;
+  if (!findHost(http, host))
     return;
 
   Cookies cookies;
-  if (!findHost(http, cookies.host))
-    return;
-
   if (!findCookie(http, cookies))
     return;
 
@@ -108,6 +110,9 @@ void CookieSniffer::processPacket(GPacket* packet) {
     return;
   }
 
+  cookies.host = host;
+  cookies.url = host + uri;
+
   QDateTime time_;
   time_.setTime_t(packet->pktHdr->ts.tv_sec);
   cookies.time = time_;
@@ -121,14 +126,29 @@ void CookieSniffer::processClose() {
   emit closed();
 }
 
-bool CookieSniffer::isHttpRequest(QString& http) {
+bool CookieSniffer::isHttpRequest(QString& http, QString& uri) {
+  int i;
+
+  bool res = false;
   if (http.startsWith("GET ")) {
-    return true;
+    i = 4;
+    res = true;
   }
-  if (http.startsWith("POST ")) {
-    return true;
+  else if (http.startsWith("POST ")) {
+    i = 5;
+    res = true;
   }
-  return false;
+  if (!res) return false;
+
+  while (true) {
+    if (i >= http.length())
+      return false;
+    if (http[i] == ' ')
+      break;
+    uri += http[i];
+    i++;
+  }
+  return true;
 }
 
 bool CookieSniffer::findHost(QString& http, QString& host) {

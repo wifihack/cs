@@ -109,7 +109,7 @@
       </column>
       <column>
        <property name="text">
-        <string>host</string>
+        <string>url</string>
        </property>
       </column>
      </widget>

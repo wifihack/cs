@@ -28,6 +28,7 @@ struct Cookies : QList<Cookie> {
   QDateTime time;
   QString ip;
   QString host;
+  QString url;
   Status status;
 
   bool decode(QString& s);
@@ -70,7 +71,7 @@ signals:
 protected:
   NotCompletedCookiesMap prevHttp_;
 
-  bool isHttpRequest(QString& http);
+  bool isHttpRequest(QString& http, QString& uri);
   bool findHost(QString& http, QString& host);
   bool findCookie(QString& http, Cookies& cookies);
   bool findEndOfHeader(QString& http);
