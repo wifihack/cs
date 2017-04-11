@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QMessageBox>
+#include <QSound>
 #include <GJsonAux>
 #include <GPropWidget>
 
@@ -180,6 +181,9 @@ void Widget::processCookies(Cookies cookies) {
   item->setText(0, cookies.time.toString("hh:mm:ss"));
   item->setText(1, cookies.ip);
   item->setText(2, cookies.url);
+  static QSound sound("captured.wav");
+  if (sound.isFinished())
+    sound.play();
 }
 
 void Widget::processClosed() {

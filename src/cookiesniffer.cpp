@@ -36,7 +36,7 @@ bool Cookies::decode(QString& s) {
 CookieSniffer::CookieSniffer(QObject* parent) : GStateObj(parent) {
   QObject::connect(&pcap_, SIGNAL(captured(GPacket*)), this, SLOT(processPacket(GPacket*)), Qt::DirectConnection);
   QObject::connect(&pcap_, SIGNAL(closed()), this, SLOT(processClose()), Qt::AutoConnection);
-  pcap_.dev_ = "DeSniffer0";
+  pcap_.dev_ = "tap0";
 }
 
 CookieSniffer::~CookieSniffer() {
